@@ -5,7 +5,7 @@ import Tour from './Tour'
 const Tours = () => {
 	const { tours, isLoading } = useContext(TourContext)
 
-	const tourElements = tours.map((tour) => {
+	const tourElements = tours?.map((tour) => {
 		return <Tour key={tour.id} tour={tour} />
 	})
 

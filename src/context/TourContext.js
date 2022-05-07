@@ -1,23 +1,35 @@
-import React, { createContext, useState, useEffect } from 'react'
+import React, { createContext, useReducer, useEffect } from 'react'
+import tourReducer from './tourReducer'
 
 const TourContext = createContext()
 
 export function TourContextProvider({ children }) {
 	const url = 'https://course-api.com/react-tours-project'
 
-	const [isLoading, setIsLoading] = useState(true)
+	const initialState = {
+		tours: [],
+		isLoading: true,
+	}
 
-	const [tours, setTours] = useState([])
+	const [state, dispatch] = useReducer(tourReducer, initialState)
 
 	const fetchTours = async () => {
 		const response = await fetch(url)
 		const data = await response.json()
-		setTours(data)
-		setIsLoading(false)
+		dispatch({
+			type: 'GET_TOURS',
+			payload: data,
+		})
 	}
 
 	const deleteTour = (id) => {
-		setTours(tours.filter((tour) => tour.id !== id))
+		dispatch({
+			type: 'DELETE_TOUR',
+			payload: {
+				tours: state.tours,
+				id,
+			},
+		})
 	}
 
 	useEffect(() => {
@@ -27,9 +39,9 @@ export function TourContextProvider({ children }) {
 	return (
 		<TourContext.Provider
 			value={{
-				tours,
+				tours: state.tours,
 				deleteTour,
-				isLoading,
+				isLoading: state.isLoading,
 			}}
 		>
 			{children}
